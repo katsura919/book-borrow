@@ -1,0 +1,153 @@
+
+.home-container {
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    background-color: #f9f9f9;
+  }
+  
+  .dashboard-title {
+    text-align: center;
+    color: #333;
+    margin-bottom: 20px;
+  }
+  
+  .table-responsive {
+    width: 100%;
+    height: 850px; /* Adjust the height as needed */
+    overflow-y: auto;  /* Enable vertical scrolling */
+    border: 1px solid #ddd; /* Optional: add a border around the table */
+    border-radius: 8px; /* Optional: round the corners */
+  }
+  
+  /* Add styles for the table */
+  .dashboard-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+  }
+  
+  .dashboard-table th,
+  .dashboard-table td {
+    padding: 12px;
+    text-align: left;
+    border: 1px solid #ddd;
+  }
+  
+  .dashboard-table th {
+    background-color: #007bff;
+    color: white;
+  }
+  
+  /* Add any additional styles you previously had */
+  
+  .dashboard-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+  }
+  
+  .dashboard-table th,
+  .dashboard-table td {
+    padding: 12px;
+    text-align: left;
+    border: 1px solid #ddd;
+  }
+  
+  .dashboard-table th {
+    background-color: #007bff;
+    color: white;
+  }
+  
+  .dashboard-table tr:nth-child(even) {
+    background-color: #f2f2f2;
+  }
+  
+  .dashboard-table tr:hover {
+    background-color: #f1f1f1;
+  }
+  
+
+  
+  .approve-button {
+    background-color: #28a745; /* Green color for approval */
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 10px 15px;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.2s; /* Added transition for smooth effect */
+  }
+  
+  .approve-button:hover {
+    background-color: #218838; /* Darker green on hover */
+  }
+  
+  .approve-button:disabled {
+    background-color: #ccc; /* Grey color for disabled button */
+    cursor: not-allowed;
+  }
+  
+  /* Styles for the approved button */
+  .approved {
+    background-color: #6c757d; /* Gray color for approved status */
+    color: white;
+    cursor: not-allowed; /* Optional: change cursor for approved button */
+    border: none; /* Remove border for a cleaner look */
+  }
+
+  
+
+  .decline-button {
+    background-color: #e73131; /* Green color for approval */
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 10px 15px;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.2s; /* Added transition for smooth effect */
+  }
+
+  .decline-button:hover {
+    background-color: #c02626; /* Darker green on hover */
+  }
+  
+  .decline-button:disabled {
+    background-color: #ccc; /* Grey color for disabled button */
+    cursor: not-allowed;
+  }
+  
+  /* Styles for the approved button */
+  .declined {
+    background-color: #6c757d; /* Gray color for approved status */
+    color: white;
+    cursor: not-allowed; /* Optional: change cursor for approved button */
+    border: none; /* Remove border for a cleaner look */
+  }
+  
+
+
+  @media (max-width: 768px) {
+   
+  
+    .dashboard-title {
+      font-size: 24px;
+    }
+  
+    .dashboard-table th,
+    .dashboard-table td {
+      font-size: 14px;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .dashboard-title {
+      font-size: 20px;
+    }
+  
+    .dashboard-table th,
+    .dashboard-table td {
+      font-size: 12px;
+      padding: 6px;
+    }
+  }
+  

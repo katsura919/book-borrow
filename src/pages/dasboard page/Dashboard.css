@@ -1,0 +1,92 @@
+/* Container for the dashboard layout */
+.dashboard-container {
+    display: flex;
+    min-height: 100vh;
+    background-color: #f4f4f4;
+    font-family: 'Arial', sans-serif;
+  }
+  
+  /* Sidebar styling */
+  .sidebar {
+    width: 210px;
+    background-color: #343a40;
+    color: white;
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+    position: fixed; /* Fixed position */
+    height: 100%; /* Full height */
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+  }
+  
+  .sidebar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .sidebar-header h2 {
+    margin: 0;
+    font-size: 1.5em;
+  }
+  
+  /* Sidebar menu */
+  .sidebar-menu {
+    list-style-type: none;
+    padding: 0;
+    margin-top: 20px;
+  }
+  
+  .sidebar-menu li {
+    margin: 20px 0;
+    cursor: pointer;
+    padding: 10px;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+  }
+  
+  .sidebar-menu li:hover {
+    background-color: #495057;
+  }
+  
+  /* Content area styling */
+  .dashboard-content {
+    flex-grow: 1;
+    margin-left: 250px; /* Margin to accommodate sidebar */
+    padding: 20px;
+    background-color: #ffffff;
+    transition: margin-left 0.3s ease;
+  }
+  
+  /* Header of the content area */
+  .content-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .content-header h1 {
+    font-size: 28px;
+    color: #333;
+  }
+  
+  /* Main content styling */
+  .content-main {
+    height: 850px;
+    margin-top: 20px;
+    background-color: #e9ecef;
+    padding: 20px;
+    border-radius: 5px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  }
+  
+  /* Responsive behavior */
+  @media (max-width: 768px) {
+  
+  
+    .dashboard-content {
+      margin-left: 10; /* No margin on mobile */
+      padding: 20px;
+    }
+  }
+  

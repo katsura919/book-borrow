@@ -1,0 +1,81 @@
+form {
+    max-width: 600px;
+    margin: 50px auto;
+    padding: 20px;
+    border: 2px solid #4CAF50;
+    border-radius: 10px;
+    background-color: #fff;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  h2 {
+    text-align: center;
+    margin-bottom: 20px;
+    color: #4CAF50;
+    font-size: 24px;
+  }
+  
+  h3 {
+    color: #333;
+    font-size: 18px;
+    margin-bottom: 10px;
+  }
+  
+  label {
+    display: block;
+    margin-bottom: 10px;
+    font-weight: bold;
+    color: #333;
+  }
+  
+  input {
+    width: 95%;
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+  }
+  
+  .book-input {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 10px;
+  }
+  
+  .book-input input {
+    flex: 1;
+  }
+  
+  button {
+    background-color: #FCB316;
+    color: white;
+    border: none;
+    padding: 10px;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  .button-add{
+    background-color: rgb(81, 128, 230);
+  }
+  .button-add, .button-submit{
+    width: 100%;
+    margin-bottom: 20px;
+  }
+  
+  .button-remove {
+    background-color: rgb(248, 64, 64);
+    height: 37px;
+  }
+
+  .button-remove:hover{
+    background-color: rgb(221, 61, 61);
+  }
+
+  .button-add:hover{
+    background-color: rgb(68, 110, 199);
+  }
+  
+  .button-submit:hover {
+    background-color: #dda221;
+  }
+  

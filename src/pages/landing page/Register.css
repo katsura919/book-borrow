@@ -1,0 +1,85 @@
+/* Container for centering form */
+
+  
+  /* Form styling */
+  .register-form {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background-color: #fff;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 400px; /* Max width for form */
+    margin: 50px auto;
+  }
+  
+  /* Input field styling */
+  .input-field {
+    width: 100%;
+    padding: 12px;
+    margin: 15px 0; /* Spacing between fields */
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 16px;
+    transition: border 0.3s ease;
+  }
+  
+  /* Input focus effect */
+  .input-field:focus {
+    border-color: #007bff;
+    outline: none;
+  }
+  
+  /* Button styling */
+  .bttn {
+    width: 100%;
+    padding: 12px;
+    font-size: 16px;
+    margin-top: 20px; /* Space above buttons */
+    cursor: pointer;
+    border: none;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+  }
+  
+  /* Register button */
+  .register-btn {
+    background-color: #cf4b33;
+    color: white;
+  }
+  
+  .register-btn:hover {
+    background-color: #a73b28;
+  }
+  
+  /* Login button */
+  .login-btn {
+    background-color: #007bff;
+    color: white;
+    margin-top: 10px;
+  }
+  
+  .login-btn:hover {
+    background-color: #0056b3;
+  }
+  
+  /* Mobile responsiveness */
+  @media (max-width: 768px) {
+    .register-form {
+      padding: 20px;
+      width: 90%;
+    }
+  
+    .btn {
+      font-size: 14px;
+      padding: 10px;
+    }
+  
+    .input-field {
+      font-size: 14px;
+    }
+  }
+  

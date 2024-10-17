@@ -1,0 +1,105 @@
+/* General form container styling */
+.login-form {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background-color: #fff;
+  padding: 30px;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 400px; /* Max width for form */
+  margin: 50px auto;
+    
+  }
+
+  .error-notif {
+    color: red;
+  }
+  
+  /* Input field styling */
+  .input-field {
+    width: 100%;
+    padding: 12px;
+    margin: 15px 0; /* Increased margin for better spacing */
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 16px;
+    transition: border 0.3s ease;
+  }
+  
+  /* Input field focus effect */
+  .input-field:focus {
+    border: 1px solid #007bff;
+    outline: none;
+  }
+  
+  /* Button container styling */
+  .button-group {
+    display: flex;
+    flex-direction: column;
+    justify-content: center; /* Centering the buttons */
+    align-items: center;
+    width: 100%;
+    margin-top: 20px; /* Extra spacing above the buttons */
+  
+  }
+  
+  /* Button styling */
+  .btn {
+    padding: 12px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    border: none;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+    flex: 1;
+    margin: 6px; /* Add space between buttons */
+    width: 100%;
+  }
+  
+  /* Login button styling */
+  .login-btn {
+    background-color: #007bff;
+    color: white;
+  }
+  
+  .login-btn:hover {
+    background-color: #0056b3;
+  }
+  
+  /* Register button styling */
+  .register-btn {
+    background-color: #cf4b33;
+    color: white;
+  }
+  
+  .register-btn:hover {
+    background-color: #a73b28;
+  }
+
+  /* Landing button styling */
+  .landing-btn {
+    background-color: #2dbb39;
+    color: white;
+  }
+  
+  .landing-btn:hover {
+    background-color: #37a728;
+  }
+  
+  /* Responsive layout for smaller screens */
+  @media (max-width: 768px) {
+    .login-form {
+      padding: 20px;
+      width: 90%;
+    }
+  
+  
+    .btn {
+      margin: 10px 0; /* Space between stacked buttons */
+      width: 100%;
+    }
+  }
+  

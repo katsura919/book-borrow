@@ -1,0 +1,86 @@
+/* General container styling */
+.about-container {
+    max-width: 900px;
+    margin: 50px auto;
+    padding: 40px;
+    background-color: #f4f4f4;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    font-family: 'Arial', sans-serif;
+    text-align: center;
+  }
+  
+  /* Headings */
+  .heading-h1{
+    font-size: 36px;
+    color: #FCB316;
+    margin-bottom: 20px;
+  }
+  
+  .heading-h2 {
+    font-size: 28px;
+    color: #FCB316;
+    margin-top: 30px;
+    margin-bottom: 10px;
+  }
+  
+  /* Paragraphs */
+  p {
+    font-size: 18px;
+    color: #333;
+    line-height: 1.6;
+    margin-bottom: 20px;
+  }
+  
+  .intro {
+    font-size: 20px;
+    margin-bottom: 30px;
+  }
+  
+  .conclusion {
+    font-size: 20px;
+    font-weight: bold;
+  }
+  
+  /* List styling */
+  .features-list {
+    list-style: none;
+    padding: 0;
+    font-size: 18px;
+  }
+  
+  .features-list li {
+    margin-bottom: 10px;
+    padding-left: 20px;
+    position: relative;
+  }
+  
+  .features-list li::before {
+    content: "✔";
+    color: #28a745;
+    font-size: 20px;
+    position: absolute;
+    left: 0;
+    top: -2px;
+  }
+  
+  /* Responsive layout for smaller screens */
+  @media (max-width: 768px) {
+    .about-container {
+      padding: 20px;
+      width: 90%;
+    }
+  
+    h1 {
+      font-size: 30px;
+    }
+  
+    h2 {
+      font-size: 24px;
+    }
+  
+    p, .features-list li {
+      font-size: 16px;
+    }
+  }
+  
