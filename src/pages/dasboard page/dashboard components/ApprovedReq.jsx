@@ -40,8 +40,8 @@ function ApprovedReq() {
             {approvedRequests.map((request) => (
               <tr key={request.req_id}>
                 <td>{request.req_id}</td>
-                <td>{request.student_id}</td>
-                <td>{request.borrow_date}</td>
+                <td>{request.borrower_id}</td>
+                <td>{request.req_approve}</td>
                 <td>{request.status}</td>
                 <td>{request.return_date || 'Not Returned'}</td>
                 <td>{request.req_created}</td>

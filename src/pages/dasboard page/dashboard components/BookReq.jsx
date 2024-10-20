@@ -1,49 +1,46 @@
-import React from 'react'
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import './Tables.css'
+import './Tables.css';
+
+const ENTRIES_PER_PAGE = 1; // Change this number to show more/less entries per page
 
 function BookReq() {
-
   const [bookRequests, setBookRequests] = useState([]);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
 
+  const fetchBookRequests = async () => {
+    try {
+      const response = await axios.get('http://localhost:4000/book-requests');
+      setBookRequests(response.data);
+    } catch (error) {
+      console.error('Error fetching book requests:', error);
+    }
+  };
+
+  // Call fetchBookRequests on component mount
   useEffect(() => {
-    const fetchBookRequests = async () => {
-      try {
-        const response = await axios.get('http://localhost:4000/book-requests');
-        setBookRequests(response.data);
-      } catch (error) {
-        console.error('Error fetching book requests:', error);
-      }
-    };
-
     fetchBookRequests();
   }, []);
-
-
   const handleApprove = async (reqId) => {
     try {
-      const response = await axios.post(`http://localhost:4000/approve-request`, { reqId });
+      const response = await axios.post('http://localhost:4000/approve-request', { reqId });
       if (response.status === 200) {
-        // Optionally, you can show a success message
         alert('Request approved successfully!');
-        // Refresh the book requests
-    
+        fetchBookRequests(); // Refresh the list after approving
       }
     } catch (error) {
       console.error('Error approving the request:', error);
       alert('Failed to approve the request.');
     }
   };
-  
+
   const handleDecline = async (reqId) => {
     try {
-      const response = await axios.post(`http://localhost:4000/decline-request`, { reqId });
+      const response = await axios.post('http://localhost:4000/decline-request', { reqId });
       if (response.status === 200) {
-        // Optionally, you can show a success message
         alert('Request declined successfully!');
-        // Refresh the book requests
-    
+        fetchBookRequests(); // Refresh the list after declining
       }
     } catch (error) {
       console.error('Error declining the request:', error);
@@ -51,43 +48,72 @@ function BookReq() {
     }
   };
 
+  // Function to handle the search
+  const handleSearchChange = (e) => {
+    setSearchTerm(e.target.value);
+    setCurrentPage(1); // Reset to first page on search
+  };
+
+  // Filtered book requests based on the search term
+  const filteredRequests = bookRequests.filter(request =>
+    request.borrower_id.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  // Calculate pagination
+  const totalPages = Math.ceil(filteredRequests.length / ENTRIES_PER_PAGE);
+  const indexOfLastRequest = currentPage * ENTRIES_PER_PAGE;
+  const indexOfFirstRequest = indexOfLastRequest - ENTRIES_PER_PAGE;
+  const currentRequests = filteredRequests.slice(indexOfFirstRequest, indexOfLastRequest);
+
   return (
     <div className="home-container">
-     
-      <div className="table-responsive"> {/* Wrapper for the table */}
+      <input
+        type="text"
+        placeholder="Search by Borrower ID"
+        value={searchTerm}
+        onChange={handleSearchChange}
+      />
+      <div className="table-responsive">
         <table className="dashboard-table">
           <thead>
             <tr>
               <th>Request ID</th>
-              <th>Student ID</th>
-              <th>Borrow Date</th>
+              <th>Borrower ID</th>
               <th>Status</th>
-              <th>Return Date</th>
-              <th>Request Created Date</th>
+              <th>Request Created</th>
+              <th>Books</th>
+      
               <th>Change Status</th>
             </tr>
           </thead>
           <tbody>
-            {bookRequests.map((request) => (
+            {currentRequests.map((request) => (
               <tr key={request.req_id}>
                 <td>{request.req_id}</td>
-                <td>{request.student_id}</td>
-                <td>{request.borrow_date}</td>
+                <td>{request.borrower_id}</td>
                 <td>{request.status}</td>
-                <td>{request.return_date || 'Not Returned'}</td>
                 <td>{request.req_created}</td>
                 <td>
-                  <button 
-                    onClick={() => handleApprove(request.req_id)} 
-                    disabled={request.status === 'approved'} // Disable if already approved
+                  <ul>
+                    {request.books.map((book) => (
+                      <li key={book.book_id}>
+                        {book.title} (ISBN: {book.isbn}) {/* Removed due date from here */}
+                      </li>
+                    ))}
+                  </ul>
+                </td>
+
+                <td>
+                  <button
+                    onClick={() => handleApprove(request.req_id)}
+                    disabled={request.status === 'approved'}
                     className={request.status === 'approved' ? 'approved' : 'approve-button'}
                   >
                     {request.status === 'approved' ? 'Approved' : 'Approve'}
                   </button>
-
-                  <button 
-                    onClick={() => handleDecline(request.req_id)} 
-                    disabled={request.status === 'declined'} // Disable if already approved
+                  <button
+                    onClick={() => handleDecline(request.req_id)}
+                    disabled={request.status === 'declined'}
                     className={request.status === 'declined' ? 'declined' : 'decline-button'}
                   >
                     {request.status === 'declined' ? 'Declined' : 'Decline'}
@@ -98,8 +124,23 @@ function BookReq() {
           </tbody>
         </table>
       </div>
+      <div className="pagination">
+        <button
+          onClick={() => setCurrentPage(currentPage - 1)}
+          disabled={currentPage === 1}
+        >
+          Previous
+        </button>
+        <span>Page {currentPage} of {totalPages}</span>
+        <button
+          onClick={() => setCurrentPage(currentPage + 1)}
+          disabled={currentPage === totalPages || currentRequests.length === 0}
+        >
+          Next
+        </button>
+      </div>
     </div>
   );
-};
+}
 
-export default BookReq
+export default BookReq;

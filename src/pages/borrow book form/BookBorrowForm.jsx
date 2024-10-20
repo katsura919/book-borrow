@@ -3,19 +3,40 @@ import axios from 'axios';
 import './BookBorrowForm.css'; // Import CSS
 
 function BookBorrowForm() {
+  const [borrowerType, setBorrowerType] = useState('student');
   const [studentId, setStudentId] = useState('');
-  const [firstName, setfirstName] = useState('');
-  const [lastName, setlastName] = useState('');
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
   const [email, setEmail] = useState('');
   const [contactNumber, setContactNumber] = useState('');
   const [books, setBooks] = useState([{ title: '', isbn: '' }]);
 
+  const getBorrowLimit = (type) => {
+    switch (type) {
+      case 'student':
+        return { maxBooks: 3, dueDays: 7 };
+      case 'faculty':
+        return { maxBooks: 10, dueDays: 120 }; // 1 semester (~120 days)
+      case 'employee':
+        return { maxBooks: 10, dueDays: 7 };
+      default:
+        return { maxBooks: 0, dueDays: 0 };
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    const { maxBooks } = getBorrowLimit(borrowerType);
+
+    if (books.length > maxBooks) {
+      alert(`Exceeded the book limit! ${borrowerType}s can only borrow ${maxBooks} books.`);
+      return;
+    }
+
     if (
-      !studentId || !firstName || 
-      !lastName || !email || !contactNumber || books.some(book => !book.title || !book.isbn)
+      !studentId || !firstName || !lastName || 
+      !email || !contactNumber || books.some(book => !book.title || !book.isbn)
     ) {
       alert('Please fill in all fields.');
       return;
@@ -28,51 +49,53 @@ function BookBorrowForm() {
         lastName,
         email,
         contactNumber,
+        borrowerType,
         books,
       });
 
       if (response.status === 201) {
         alert('Books borrowed successfully!');
-        setStudentId('');
-        setfirstName('');
-        setlastName('');
-        setEmail('');
-        setContactNumber('');
-        setBooks([{ title: '', isbn: '' }]);
+        resetForm();
       } else {
         alert('Failed to borrow books.');
       }
     } catch (error) {
-      if (error.response) {
-        console.error('Error:', error.response.data.message);
-        alert(`Error: ${error.response.data.message}`);
-      } else {
-        console.error('Network error:', error);
-        alert('An error occurred while borrowing books.');
-      }
+      console.error('Error:', error.response?.data?.message || error.message);
+      alert('An error occurred while borrowing books.');
     }
   };
 
-  
+  const resetForm = () => {
+    setStudentId('');
+    setFirstName('');
+    setLastName('');
+    setEmail('');
+    setContactNumber('');
+    setBooks([{ title: '', isbn: '' }]);
+  };
+
   const handleBookChange = (index, field, value) => {
     const newBooks = [...books];
     newBooks[index][field] = value;
     setBooks(newBooks);
   };
 
-  const handleAddBook = () => {
-    setBooks([...books, { title: '', isbn: '' }]);
-  };
+  const handleAddBook = () => setBooks([...books, { title: '', isbn: '' }]);
 
-  const handleRemoveBook = (index) => {
-    const newBooks = books.filter((_, i) => i !== index);
-    setBooks(newBooks);
-  };
+  const handleRemoveBook = (index) => setBooks(books.filter((_, i) => i !== index));
 
-  
   return (
     <form onSubmit={handleSubmit}>
       <h2>Book Borrowing Form</h2>
+
+      <label>
+        Borrower Type:
+        <select value={borrowerType} onChange={(e) => setBorrowerType(e.target.value)}>
+          <option value="student">Student</option>
+          <option value="faculty">Faculty</option>
+          <option value="employee">Employee</option>
+        </select>
+      </label>
 
       <label>
         Student ID:
@@ -89,7 +112,7 @@ function BookBorrowForm() {
         <input
           type="text"
           value={firstName}
-          onChange={(e) => setfirstName(e.target.value)}
+          onChange={(e) => setFirstName(e.target.value)}
           required
         />
       </label>
@@ -99,7 +122,7 @@ function BookBorrowForm() {
         <input
           type="text"
           value={lastName}
-          onChange={(e) => setlastName(e.target.value)}
+          onChange={(e) => setLastName(e.target.value)}
           required
         />
       </label>
@@ -142,17 +165,17 @@ function BookBorrowForm() {
             required
           />
           {index > 0 && (
-            <button className="button-remove" onClick={() => handleRemoveBook(index)}>
+            <button type="button" onClick={() => handleRemoveBook(index)}>
               Remove
             </button>
           )}
         </div>
       ))}
-      <button className="button-add" onClick={handleAddBook}>
+      <button type="button" onClick={handleAddBook}>
         Add Another Book
       </button>
 
-      <button className="button-submit" type="submit">Borrow Books</button>
+      <button type="submit">Borrow Books</button>
     </form>
   );
 }
