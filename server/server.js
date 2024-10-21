@@ -66,16 +66,15 @@ db.serialize(() => {
       req_id INTEGER NOT NULL,
       title VARCHAR(255) NOT NULL,
       isbn VARCHAR(20) NOT NULL,
-      due_date DATE NOT NULL,
+      due_date DATE,
       FOREIGN KEY (req_id) REFERENCES book_reqsts(req_id) ON DELETE CASCADE
     );
   `);
 });
 
 
-
-
-// User Registration
+// Landing Page APIs
+  // User Registration
 app.post('/register', (req, res) => {
   const { firstName, lastName, username, password } = req.body;
   if (!username || !password) return res.status(400).send('Missing username or password');
@@ -109,8 +108,6 @@ app.post('/login', (req, res) => {
   });
 });
 
-
-
 // Request a book
 app.post('/borrow', (req, res) => {
   const { studentId, firstName, lastName, email, contactNumber, borrowerType, books } = req.body;
@@ -126,27 +123,19 @@ app.post('/borrow', (req, res) => {
     return res.status(400).json({ message: 'Invalid borrower type.' });
   }
 
-  // Define book limits and due days per borrower type
+  // Define book limits per borrower type
   const rules = {
-    student: { maxBooks: 3, dueDays: 7 },
-    faculty: { maxBooks: 10, dueDays: 120 }, // ~1 semester
-    employee: { maxBooks: 10, dueDays: 7 },
+    student: { maxBooks: 3 },
+    faculty: { maxBooks: 10 },
+    employee: { maxBooks: 10 },
   };
 
-  const { maxBooks, dueDays } = rules[borrowerType];
+  const { maxBooks } = rules[borrowerType];
 
   // Enforce book limit
   if (books.length > maxBooks) {
     return res.status(400).json({ message: `${borrowerType}s can only borrow up to ${maxBooks} books.` });
   }
-
-  // Calculate due date
-  const calculateDueDate = (days) => {
-    const dueDate = new Date();
-    dueDate.setDate(dueDate.getDate() + days);
-    return dueDate.toISOString().split('T')[0]; // Format: YYYY-MM-DD
-  };
-  const dueDate = calculateDueDate(dueDays);
 
   // Step 1: Insert or Update Borrower Info in `borrowers` Table
   db.run(
@@ -174,12 +163,12 @@ app.post('/borrow', (req, res) => {
 
         const borrowId = this.lastID;
 
-        // Step 3: Bulk Insert Books into `borrowed_books` Table
+        // Step 3: Bulk Insert Books into `borrowed_books` Table with `due_date` set to null
         const insertBooks = books.map((book) => {
           return new Promise((resolve, reject) => {
             db.run(
               'INSERT INTO borrowed_books (req_id, title, isbn, due_date) VALUES (?, ?, ?, ?)',
-              [borrowId, book.title, book.isbn, dueDate],
+              [borrowId, book.title, book.isbn, null],  // Leave due_date as null
               function (err) {
                 if (err) {
                   console.error('Error inserting borrowed book:', err.message);
@@ -194,10 +183,7 @@ app.post('/borrow', (req, res) => {
         // Wait for all books to be inserted
         Promise.all(insertBooks)
           .then(() => {
-            res.status(201).json({
-              message: 'Borrow request successfully registered.',
-              dueDate,
-            });
+            res.status(201).json({ message: 'Borrow request successfully registered.' });
           })
           .catch((err) => {
             console.error('Error inserting books:', err.message);
@@ -211,7 +197,10 @@ app.post('/borrow', (req, res) => {
 
 
 
-// Show all book requests
+
+// Dashboard APIs
+  // Show Requests
+  // Show all book requests
 app.get('/book-requests', (req, res) => {
   const query = `
     SELECT 
@@ -276,54 +265,208 @@ app.get('/book-requests', (req, res) => {
   });
 });
 
-
-
-
-// Show all approved requests
+  // Show all approved requests
 app.get('/approved-req', (req, res) => {
-  db.all("SELECT * FROM book_reqsts WHERE status = 'Approved'", [], (err, rows) => {
+  const query = `
+    SELECT 
+      br.req_id,
+      br.borrower_id,
+      br.status,
+      br.req_created,
+      br.req_approve,
+      bo.first_name,
+      bo.last_name,
+      bo.borrower_type,
+      bb.book_id,
+      bb.title,
+      bb.isbn,
+      bb.due_date
+    FROM book_reqsts br
+    JOIN borrowers bo ON br.borrower_id = bo.borrower_id
+    LEFT JOIN borrowed_books bb ON br.req_id = bb.req_id
+    WHERE br.status = 'Approved'
+    ORDER BY br.req_created DESC;
+  `;
+
+  db.all(query, [], (err, rows) => {
     if (err) {
       console.error('Error fetching book requests:', err.message);
-      return res.status(500).json({ message: 'Error fetching book requests' });
+      return res.status(500).json({ message: 'Error retrieving book requests' });
     }
-    res.json(rows);
+
+    // Group requests with their corresponding books
+    const groupedData = rows.reduce((acc, row) => {
+      const { req_id, borrower_id, status, req_created, req_approve, first_name, last_name, borrower_type } = row;
+
+      if (!acc[req_id]) {
+        acc[req_id] = {
+          req_id,
+          borrower_id,
+          borrower_name: `${first_name} ${last_name}`,
+          borrower_type,
+          status,
+          req_created,
+          req_approve,
+          books: []
+        };
+      }
+
+      if (row.book_id) {
+        acc[req_id].books.push({
+          book_id: row.book_id,
+          title: row.title,
+          isbn: row.isbn,
+          due_date: row.due_date
+        });
+      }
+
+      return acc;
+    }, {});
+
+    // Convert grouped data to an array
+    const result = Object.values(groupedData);
+
+    res.status(200).json(result);
   });
 });
 
-//Show all declined requests
-app.get('/declined-req', (req, res) => {
-  db.all("SELECT * FROM book_reqsts WHERE status = 'declined'", [], (err, rows) => {
+  //Show all declined requests
+app.get('/rejected-req', (req, res) => {
+  const query = `
+    SELECT 
+      br.req_id,
+      br.borrower_id,
+      br.status,
+      br.req_created,
+      br.req_approve,
+      bo.first_name,
+      bo.last_name,
+      bo.borrower_type,
+      bb.book_id,
+      bb.title,
+      bb.isbn,
+      bb.due_date
+    FROM book_reqsts br
+    JOIN borrowers bo ON br.borrower_id = bo.borrower_id
+    LEFT JOIN borrowed_books bb ON br.req_id = bb.req_id
+    WHERE br.status = 'Rejected'
+    ORDER BY br.req_created DESC;
+  `;
+
+  db.all(query, [], (err, rows) => {
     if (err) {
       console.error('Error fetching book requests:', err.message);
-      return res.status(500).json({ message: 'Error fetching book requests' });
+      return res.status(500).json({ message: 'Error retrieving book requests' });
     }
-    res.json(rows);
+
+    // Group requests with their corresponding books
+    const groupedData = rows.reduce((acc, row) => {
+      const { req_id, borrower_id, status, req_created, req_approve, first_name, last_name, borrower_type } = row;
+
+      if (!acc[req_id]) {
+        acc[req_id] = {
+          req_id,
+          borrower_id,
+          borrower_name: `${first_name} ${last_name}`,
+          borrower_type,
+          status,
+          req_created,
+          req_approve,
+          books: []
+        };
+      }
+
+      if (row.book_id) {
+        acc[req_id].books.push({
+          book_id: row.book_id,
+          title: row.title,
+          isbn: row.isbn,
+          due_date: row.due_date
+        });
+      }
+
+      return acc;
+    }, {});
+
+    // Convert grouped data to an array
+    const result = Object.values(groupedData);
+
+    res.status(200).json(result);
   });
 });
 
-
-// Approve a request
+// Buttons
+  // Approve a request
 app.post('/approve-request', (req, res) => {
   const { reqId } = req.body;
 
-  // Update the status of the request in the database
-  db.run('UPDATE book_reqsts SET status = ?, req_approve = CURRENT_TIMESTAMP WHERE req_id = ?', ['Approved', reqId], function(err) {
+  // Query to get the borrower type based on the request ID
+  const getBorrowerTypeQuery = `
+    SELECT borrowers.borrower_type
+    FROM book_reqsts
+    JOIN borrowers ON book_reqsts.borrower_id = borrowers.borrower_id
+    WHERE book_reqsts.req_id = ?
+  `;
+
+  // Define due days per borrower type
+  const rules = {
+    student: 7, // 7 days
+    faculty: 120, // 1 semester (~120 days)
+    employee: 7, // 7 days
+  };
+
+  db.get(getBorrowerTypeQuery, [reqId], (err, row) => {
     if (err) {
-      console.error('Error updating book request status:', err.message);
-      return res.status(500).json({ message: 'Error updating book request status' });
+      console.error('Error fetching borrower type:', err.message);
+      return res.status(500).json({ message: 'Error fetching borrower type' });
     }
 
-    // Respond with success
-    res.status(200).json({ message: 'Book request approved successfully' });
+    if (!row) {
+      return res.status(404).json({ message: 'Request or borrower not found.' });
+    }
+
+    const dueDays = rules[row.borrower_type];
+
+    // Calculate the due date based on the current date
+    const dueDate = new Date();
+    dueDate.setDate(dueDate.getDate() + dueDays);
+    const formattedDueDate = dueDate.toISOString().split('T')[0]; // YYYY-MM-DD
+
+    // Step 1: Update the request status and approval date
+    db.run(
+      'UPDATE book_reqsts SET status = ?, req_approve = CURRENT_TIMESTAMP WHERE req_id = ?',
+      ['Approved', reqId],
+      function (err) {
+        if (err) {
+          console.error('Error updating book request status:', err.message);
+          return res.status(500).json({ message: 'Error updating book request status' });
+        }
+
+        // Step 2: Update the due date in the borrowed_books table
+        db.run(
+          'UPDATE borrowed_books SET due_date = ? WHERE req_id = ?',
+          [formattedDueDate, reqId],
+          function (err) {
+            if (err) {
+              console.error('Error updating due date:', err.message);
+              return res.status(500).json({ message: 'Error updating due date' });
+            }
+
+            // Respond with success
+            res.status(200).json({ message: 'Book request approved successfully' });
+          }
+        );
+      }
+    );
   });
 });
 
-// Decline a request
+  // Decline a request
 app.post('/decline-request', (req, res) => {
   const { reqId } = req.body;
 
   // Update the status of the request in the database
-  db.run('UPDATE book_reqsts SET status = ? WHERE req_id = ?', ['declined', reqId], function(err) {
+  db.run('UPDATE book_reqsts SET status = ? WHERE req_id = ?', ['Rejected', reqId], function(err) {
     if (err) {
       console.error('Error updating book request status:', err.message);
       return res.status(500).json({ message: 'Error updating book request status' });
@@ -334,7 +477,11 @@ app.post('/decline-request', (req, res) => {
   });
 });
 
-// Middleware to verify JWT
+
+
+
+//Authentication
+  // Middleware to verify JWT
 const authenticateJWT = (req, res, next) => {
   const token = req.headers.authorization;
   if (!token) return res.status(401).send('Access denied');
@@ -346,12 +493,12 @@ const authenticateJWT = (req, res, next) => {
   });
 };
 
-// Protected route (User Dashboard)
+  // Protected route (User Dashboard)
 app.get('/dashboard', authenticateJWT, (req, res) => {
   res.send(`Welcome user ${req.userId}`);
 });
 
-// Start server
+  // Start server
 app.listen(PORT, () => {
   console.log('Server running on port 4000');
 });

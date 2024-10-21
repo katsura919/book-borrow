@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import './Tables.css';
 
-const ENTRIES_PER_PAGE = 1; // Change this number to show more/less entries per page
+const ENTRIES_PER_PAGE = 5; // Change this number to show more/less entries per page
 
 function BookReq() {
   const [bookRequests, setBookRequests] = useState([]);
@@ -116,7 +116,7 @@ function BookReq() {
                     disabled={request.status === 'declined'}
                     className={request.status === 'declined' ? 'declined' : 'decline-button'}
                   >
-                    {request.status === 'declined' ? 'Declined' : 'Decline'}
+                    {request.status === 'declined' ? 'Rejected' : 'Reject'}
                   </button>
                 </td>
               </tr>

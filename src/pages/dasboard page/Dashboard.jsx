@@ -64,8 +64,8 @@ function Dashboard({ token, onLogout }) {
           <li onClick={gotoBookDashboard}>Dashboard</li>
           <li onClick={gotoBookReq}>Book Request</li>
           <li onClick={gotoApprovedReq}>Approved Requests</li>
-          <li onClick={gotoDeclinedReq}>Declined Requests</li>
-          <li onClick={() => navigate('/dashboard/settings')}>Settings</li>
+          <li onClick={gotoDeclinedReq}>Rejected Requests</li>
+          {/*<li onClick={() => navigate('/dashboard/settings')}>Settings</li>*/}
           <li onClick={handleLogout}>Logout</li>
         </ul>
       </div>
