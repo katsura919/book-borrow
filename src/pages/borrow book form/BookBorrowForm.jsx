@@ -86,7 +86,7 @@ function BookBorrowForm() {
 
   return (
     <form onSubmit={handleSubmit}>
-      <h2>Book Borrowing Form</h2>
+      <h2>Book Check-Out Form</h2>
 
       <label>
         Borrower Type:
@@ -98,7 +98,7 @@ function BookBorrowForm() {
       </label>
 
       <label>
-        Student ID:
+        ID Number:
         <input
           type="text"
           value={studentId}

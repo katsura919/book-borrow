@@ -34,57 +34,48 @@ function Login({ setToken }) {
     navigate('/register');
   };
 
-  const handleBcktoLandingPage = () => {
-    navigate('/');
-  };
 
   return (
     <>
     <Navbar/>
-      <form 
-        className="login-form"
-        onSubmit={handleSubmit}>
+    <form className="form"
+    onSubmit={handleSubmit}>
+        <div className="header">Sign In</div>
 
-        <h1>LOGIN </h1>
         {
           error &&
           <div className="error-notif">{error}</div>
                   }
 
-        <input type="text" 
-          placeholder="Username" 
-          value={username} 
-          onChange={(e) => setUsername(e.target.value)}
-          className="input-field"
-          required
-        />
+        <div className="inputs">
+            <input 
+            type="text" 
+            placeholder="Username" 
+            value={username} 
+            onChange={(e) => setUsername(e.target.value)}
+            className="input"
+            required
+            />
 
-        <input type="password" 
-          placeholder="Password" 
-          value={password} 
-          onChange={(e) => setPassword(e.target.value)} 
-          className="input-field"
-          required
-        />
+            <input 
+            placeholder="Password" 
+            value={password} 
+            onChange={(e) => setPassword(e.target.value)} 
+            className="input"
+            required
+            />
 
-        <div className="button-group">
-          <button 
-            className="btn login-btn"
-            type="submit">
-              Login
-          </button>
+          
+            <button 
+            className="sigin-btn"
+            type="submit">Login</button>
 
-          <button
-            className="btn register-btn" 
-            type="submit" 
-            onClick={handleRegisterBtn}
-            >Register
-          </button>
-
-
-
+           
+            <p class="signup-link"
+               type="submit"
+               >Don't have an account? <a onClick={handleRegisterBtn}>Sign up</a></p>
         </div>
-      </form>
+    </form>
     </>
   );
  

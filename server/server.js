@@ -507,7 +507,7 @@ app.post('/approve-request', (req, res) => {
 
   // Define due days per borrower type
   const rules = {
-    student: 1, // 7 days
+    student: 7, // 7 days
     faculty: 120, // 1 semester (~120 days)
     employee: 7, // 7 days
   };
