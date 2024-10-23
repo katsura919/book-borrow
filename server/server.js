@@ -478,6 +478,28 @@ app.post('/decline-request', (req, res) => {
 });
 
 
+//Overview
+
+app.get('/request-counts', (req, res) => {
+  db.all('SELECT status, COUNT(*) AS count FROM book_reqsts GROUP BY status', [], (err, rows) => {
+    if (err) {
+      console.error('Error fetching request counts:', err.message);
+      return res.status(500).json({ message: 'Error fetching request counts' });
+    }
+
+    const counts = { pending: 0, approved: 0, rejected: 0 };
+
+    rows.forEach(row => {
+      if (row.status === 'Pending') counts.pending = row.count;
+      if (row.status === 'Approved') counts.approved = row.count;
+      if (row.status === 'Rejected') counts.rejected = row.count;
+    });
+
+    res.json(counts);
+  });
+});
+
+
 
 
 //Authentication

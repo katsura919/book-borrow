@@ -67,6 +67,11 @@ function BookReq() {
 
   return (
     <div className="home-container">
+      <div>
+        <header className="content-header">
+          <h1>Pending Requests</h1>
+        </header>
+      </div>
       <input
         type="text"
         placeholder="Search by Borrower ID"

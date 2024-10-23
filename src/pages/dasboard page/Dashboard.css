@@ -1,5 +1,6 @@
-/* Container for the dashboard layout */
+
 .dashboard-container {
+
     display: flex;
     min-height: 100vh;
     background-color: #f4f4f4;
@@ -51,6 +52,7 @@
   
   /* Content area styling */
   .dashboard-content {
+    
     flex-grow: 1;
     margin-left: 250px; /* Margin to accommodate sidebar */
     padding: 20px;

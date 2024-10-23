@@ -67,6 +67,13 @@ function DeclinedReq() {
 
   return (
     <div className="home-container">
+
+      <div>
+        <header className="content-header">
+          <h1>Rejected Requests</h1>
+        </header>
+      </div>
+
       <input
         type="text"
         placeholder="Search by Borrower ID"

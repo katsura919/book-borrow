@@ -67,6 +67,11 @@ function ApprovedReq() {
 
   return (
     <div className="home-container">
+      <div>
+        <header className="content-header">
+          <h1>Approved Request</h1>
+        </header>
+      </div>
       <input
         type="text"
         placeholder="Search by Borrower ID"

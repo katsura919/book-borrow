@@ -11,7 +11,7 @@ import Profile from './pages/dasboard page/dashboard components/Profile';
 import BookReq from './pages/dasboard page/dashboard components/BookReq'
 import ApprovedReq from './pages/dasboard page/dashboard components/ApprovedReq';
 import DeclinedReq from './pages/dasboard page/dashboard components/DeclinedReq';
-
+import Overview from './pages/dasboard page/dashboard components/Overview'
 
 function App() {
   const [token, setToken] = useState(localStorage.getItem('token'));
@@ -31,30 +31,45 @@ function App() {
 
   return (
     <Router>
-      <Routes>
-        {/* If the user is logged in, redirect to dashboard, otherwise login */}
-        <Route path="/login" element={!token ? <Login setToken={setToken} /> : <Navigate to="/dashboard" />} />
-        <Route path="/register" element={!token ? <Register /> : <Navigate to="/dashboard" />} />
-        
-        {/* Protected route, accessible only when token exists */}
-        <Route path="/dashboard" element={token ? <Dashboard token={token} onLogout={handleLogout} /> : <Navigate to="/login" />} >
-        <Route path="profile" element={ <Profile />} />
-          <Route path="bookreq" element={<BookReq />} />
-          <Route path="approved" element={<ApprovedReq />} />
-          <Route path="declined" element={<DeclinedReq />} />
-        </Route>
-        
-        {/* Default route */}
-        <Route path="/" element={token ? <Dashboard token={token} onLogout={handleLogout}/>: <Layout />}>
-          <Route path="/" element={!token ? <LandingPage /> : <Navigate to="/dashboard" />} />
-          <Route path="/login" element={!token ? <Login /> : <Navigate to="/dashboard" />} />
-          <Route path="/checkout" element={<BookBorrowForm />} />
-          <Route path="/about" element={<AboutUs />} />
-        </Route>
-        
-   
-      </Routes>
+            <Routes>
+              {/* Login and Register Routes */}
+              <Route 
+                path="/login" 
+                element={!token ? <Login setToken={setToken} /> : <Navigate to="/dashboard" />} 
+              />
+              <Route 
+                path="/register" 
+                element={!token ? <Register /> : <Navigate to="/dashboard" />} 
+              />
+
+              {/* Protected Dashboard Route */}
+              <Route 
+                path="/dashboard" 
+                element={token ? <Dashboard token={token} onLogout={handleLogout} /> : <Navigate to="/login" />}
+              >
+                {/* Default Route: Redirect to Overview */}
+                <Route index element={<Navigate to="overview" />} />
+
+                {/* Dashboard Subpages */}
+                <Route path="profile" element={<Profile />} />
+                <Route path="bookreq" element={<BookReq />} />
+                <Route path="approved" element={<ApprovedReq />} />
+                <Route path="declined" element={<DeclinedReq />} />
+                <Route path="overview" element={<Overview />} />
+              </Route>
+
+              {/* Default Route and Public Pages */}
+              <Route 
+                path="/" 
+                element={token ? <Dashboard token={token} onLogout={handleLogout} /> : <Layout />}
+              >
+                <Route index element={!token ? <LandingPage /> : <Navigate to="/dashboard" />} />
+                <Route path="/checkout" element={<BookBorrowForm />} />
+                <Route path="/about" element={<AboutUs />} />
+              </Route>
+            </Routes>
     </Router>
+
   );
 }
 
