@@ -45,6 +45,7 @@ function Dashboard({ token, onLogout }) {
           <li onClick={() => navigate('/dashboard/bookreq')}>Pending Request</li>
           <li onClick={() => navigate('/dashboard/approved')}>Approved Requests</li>
           <li onClick={() => navigate('/dashboard/declined')}>Rejected Requests</li>
+          <li onClick={() => navigate('/dashboard/overdue')}>Overdue Requests</li>
           <li onClick={handleLogout}>Logout</li>
         </ul>
       </div>

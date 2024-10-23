@@ -7,6 +7,7 @@ function Overview() {
     pending: 0,
     approved: 0,
     rejected: 0,
+    overdue: 0,
   });
 
   const fetchRequestCounts = async () => {
@@ -39,6 +40,10 @@ function Overview() {
         <div className="card">
           <h2>Rejected Requests</h2>
           <p>{counts.rejected}</p>
+        </div>
+        <div className="card">
+          <h2>Overdue Requests</h2>
+          <p>{counts.overdue}</p>
         </div>
       </div>
     </div>

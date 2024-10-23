@@ -1,11 +1,12 @@
 
-// server.js
+// imports
 import express from 'express';
 import sqlite3 from 'sqlite3';
 import bodyParser from 'body-parser';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import cors from 'cors';
+import cron from 'node-cron';
 
 const app = express();
 const PORT = 4000;
@@ -21,7 +22,7 @@ const SECRET_KEY = 'aassaassaassaassaassaassaassaassaassaass';
 const db = new sqlite3.Database('LMS.db'); // Or use a file for persistence: './database.sqlite'
 
 
-
+// Create tables
 db.serialize(() => {
   // Create Admin Table
   db.run(`
@@ -55,6 +56,7 @@ db.serialize(() => {
       status TEXT DEFAULT 'Pending',
       req_created DATETIME DEFAULT CURRENT_TIMESTAMP,
       req_approve DATETIME DEFAULT NULL,
+      overdue_days INTEGER DEFAULT 0,
       FOREIGN KEY (borrower_id) REFERENCES borrowers(borrower_id) ON DELETE CASCADE
     );
   `);
@@ -73,6 +75,8 @@ db.serialize(() => {
 });
 
 
+
+
 // Landing Page APIs
   // User Registration
 app.post('/register', (req, res) => {
@@ -89,7 +93,7 @@ app.post('/register', (req, res) => {
   });
 });
 
-// User Login
+  // User Login
 app.post('/login', (req, res) => {
   const { username, password } = req.body;
   if (!username || !password) return res.status(400).send('Missing username or password');
@@ -108,7 +112,7 @@ app.post('/login', (req, res) => {
   });
 });
 
-// Request a book
+  // Request a book
 app.post('/borrow', (req, res) => {
   const { studentId, firstName, lastName, email, contactNumber, borrowerType, books } = req.body;
 
@@ -199,7 +203,32 @@ app.post('/borrow', (req, res) => {
 
 
 // Dashboard APIs
-  // Show Requests
+  //Overview Page
+app.get('/request-counts', (req, res) => {
+  db.all('SELECT status, COUNT(*) AS count FROM book_reqsts GROUP BY status', [], (err, rows) => {
+    if (err) {
+      console.error('Error fetching request counts:', err.message);
+      return res.status(500).json({ message: 'Error fetching request counts' });
+    }
+
+    const counts = { pending: 0, approved: 0, rejected: 0, overdue: 0 };
+
+    rows.forEach(row => {
+      if (row.status === 'Pending') counts.pending = row.count;
+      if (row.status === 'Approved') counts.approved = row.count;
+      if (row.status === 'Rejected') counts.rejected = row.count;
+      if (row.status === 'Overdue') counts.overdue = row.count;
+    });
+
+    res.json(counts);
+  });
+});
+
+
+
+
+
+// Show Requests
   // Show all book requests
 app.get('/book-requests', (req, res) => {
   const query = `
@@ -330,7 +359,7 @@ app.get('/approved-req', (req, res) => {
   });
 });
 
-  //Show all declined requests
+  // Show all declined requests
 app.get('/rejected-req', (req, res) => {
   const query = `
     SELECT 
@@ -395,7 +424,75 @@ app.get('/rejected-req', (req, res) => {
   });
 });
 
-// Buttons
+  // Show all overdue requests
+app.get('/overdue-req', (req, res) => {
+  const query = `
+    SELECT 
+      br.req_id,
+      br.borrower_id,
+      br.status,
+      br.req_created,
+      br.req_approve,
+      bo.first_name,
+      bo.last_name,
+      bo.borrower_type,
+      bb.book_id,
+      bb.title,
+      bb.isbn,
+      bb.due_date,
+      CAST(julianday('now') - julianday(bb.due_date) AS INTEGER) AS overdue_days
+    FROM book_reqsts br
+    JOIN borrowers bo ON br.borrower_id = bo.borrower_id
+    LEFT JOIN borrowed_books bb ON br.req_id = bb.req_id
+    WHERE br.status = 'Overdue'
+    ORDER BY br.req_created DESC;
+  `;
+
+  db.all(query, [], (err, rows) => {
+    if (err) {
+      console.error('Error fetching book requests:', err.message);
+      return res.status(500).json({ message: 'Error retrieving book requests' });
+    }
+
+    // Group requests with their corresponding books
+    const groupedData = rows.reduce((acc, row) => {
+      const { req_id, borrower_id, status, req_created, req_approve, first_name, last_name, borrower_type, overdue_days } = row;
+
+      if (!acc[req_id]) {
+        acc[req_id] = {
+          req_id,
+          borrower_id,
+          borrower_name: `${first_name} ${last_name}`,
+          borrower_type,
+          status,
+          req_created,
+          req_approve,
+          overdue_days,
+          books: []
+        };
+      }
+
+      if (row.book_id) {
+        acc[req_id].books.push({
+          book_id: row.book_id,
+          title: row.title,
+          isbn: row.isbn,
+          due_date: row.due_date
+        });
+      }
+
+      return acc;
+    }, {});
+
+    // Convert grouped data to an array
+    const result = Object.values(groupedData);
+
+    res.status(200).json(result);
+  });
+});
+
+
+// Buttons 
   // Approve a request
 app.post('/approve-request', (req, res) => {
   const { reqId } = req.body;
@@ -410,7 +507,7 @@ app.post('/approve-request', (req, res) => {
 
   // Define due days per borrower type
   const rules = {
-    student: 7, // 7 days
+    student: 1, // 7 days
     faculty: 120, // 1 semester (~120 days)
     employee: 7, // 7 days
   };
@@ -478,26 +575,30 @@ app.post('/decline-request', (req, res) => {
 });
 
 
-//Overview
 
-app.get('/request-counts', (req, res) => {
-  db.all('SELECT status, COUNT(*) AS count FROM book_reqsts GROUP BY status', [], (err, rows) => {
+// Function to update approved status to overdue
+const updateOverdueStatuses = () => {
+  const updateQuery = `
+  UPDATE book_reqsts 
+  SET status = 'Overdue'
+  FROM borrowed_books bb
+  WHERE book_reqsts.req_id = bb.req_id 
+    AND bb.due_date < DATE('now') 
+    AND book_reqsts.status != 'Overdue';
+`;
+
+
+  db.run(updateQuery, function (err) {
     if (err) {
-      console.error('Error fetching request counts:', err.message);
-      return res.status(500).json({ message: 'Error fetching request counts' });
+      console.error('Error updating overdue requests:', err.message);
+    } else {
+      console.log(`Overdue statuses updated successfully. Changes made: ${this.changes}`);
     }
-
-    const counts = { pending: 0, approved: 0, rejected: 0 };
-
-    rows.forEach(row => {
-      if (row.status === 'Pending') counts.pending = row.count;
-      if (row.status === 'Approved') counts.approved = row.count;
-      if (row.status === 'Rejected') counts.rejected = row.count;
-    });
-
-    res.json(counts);
   });
-});
+};
+
+// Schedule updateOverdueStatuses to run every hour
+cron.schedule('0 * * * *', updateOverdueStatuses);
 
 
 
