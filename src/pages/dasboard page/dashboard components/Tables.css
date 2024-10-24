@@ -32,6 +32,45 @@
   background-color: #f1f1f1;
 }
 
+.btn-container {
+  display: flex;
+  justify-content: space-evenly;
+}
+
+
+button {
+  background-color: #b4b4b4;
+  color: #f5f5f5;
+  border: none;
+  cursor: pointer;
+  border-radius: 8px;
+  width: 80px;
+  height: 45px;
+  transition: 0.3s;
+  margin: 5px;
+}
+
+.reject-button:hover {
+  background-color: #f63b3b;
+  box-shadow: 0 0 0 5px #f63b3b5f;
+  color: #fff;
+}
+
+.approve-button:hover {
+  background-color: #32cf47;
+  box-shadow: 0 0 0 5px #4bf63b5f;
+  color: #fff;
+}
+
+.approve-button:disabled,
+.reject-button:disabled {
+  cursor: not-allowed; /* Change cursor to indicate it's disabled */
+  pointer-events: none; /* Prevent hover effects */
+  /* Remove any hover effect styles here if needed */
+}
+
+
+
 .pagination {
   display: flex;
   justify-content: center;

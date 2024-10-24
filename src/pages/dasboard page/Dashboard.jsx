@@ -38,11 +38,11 @@ function Dashboard({ token, onLogout }) {
     <div className="dashboard-container">
       <div className="sidebar">
         <div className="sidebar-header">
-          <h2>Book Master</h2>
+          <h2 className='dashboard-title'>Book Master</h2>
         </div>
         <ul className="sidebar-menu">
           <li onClick={() => navigate('/dashboard/overview')}>Overview</li>
-          <li onClick={() => navigate('/dashboard/bookreq')}>Pending Request</li>
+          <li onClick={() => navigate('/dashboard/bookreq')}>All Request</li>
           <li onClick={() => navigate('/dashboard/approved')}>Approved Requests</li>
           <li onClick={() => navigate('/dashboard/declined')}>Rejected Requests</li>
           <li onClick={() => navigate('/dashboard/overdue')}>Overdue Requests</li>

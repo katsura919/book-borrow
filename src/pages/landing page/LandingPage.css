@@ -1,12 +1,15 @@
 body {
     margin: 0;
     padding: 0;
+    
+  
   }
 
 .landing-container {
+ 
     text-align: center;
-    background-color: #ffffff;
-    height: full;
+    background-color: #c7505000;
+ 
 
   }
   
@@ -15,16 +18,17 @@ body {
   }
   
   .landing-header h1 {
-    font-size: 2.5rem;
-    color: #333;
+    font-size: 3.5rem;
+    color: #999999;
   }
   
   .landing-header p {
     font-size: 1.2rem;
-    color: #666;
+    color: #999999;
   }
   
   .cta-button {
+    width: 200px;
     padding: 10px 20px;
     font-size: 1rem;
     color: white;
@@ -39,27 +43,12 @@ body {
     background-color: #0056b3;
   }
   
-  .features {
-    margin: 50px 0;
-  }
-  
-  .features h2 {
-    font-size: 2rem;
-    margin-bottom: 20px;
-  }
-  
-  .feature {
-    margin: 20px 0;
-    padding: 20px;
-    background-color: #fff;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-  }
+ 
   
   .landing-footer {
-    margin-top: 50px;
+    margin-top: 570px;
     font-size: 0.9rem;
-    color: #666;
+    color: #999999;
   }
   
   /* Basic styles for the landing page */

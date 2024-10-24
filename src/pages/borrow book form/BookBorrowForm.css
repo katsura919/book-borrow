@@ -1,14 +1,21 @@
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans:ital,wght@0,100..900;1,100..900&family=Press+Start+2P&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap');
+
+body {
+  font-family: 'Roboto', sans-serif;
+}
+
 form {
     max-width: 600px;
     margin: 50px auto;
     padding: 20px;
-    border: 2px solid #4CAF50;
+    border: 2px solid #bebebe;
     border-radius: 10px;
     background-color: #fff;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   }
   
   h2 {
+    font-weight: 900;
     text-align: center;
     margin-bottom: 20px;
     color: #4CAF50;
@@ -40,42 +47,103 @@ form {
     display: flex;
     gap: 10px;
     margin-bottom: 10px;
+    
   }
   
   .book-input input {
+    display: flex;
     flex: 1;
   }
   
-  button {
-    background-color: #FCB316;
-    color: white;
+  
+.button-remove {
+  margin: 0;
+  width: 120px;
+  height: 40px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  background: red;
+  border: none;
+  border-radius: 5px;
+  box-shadow: 1px 1px 3px rgba(0,0,0,0.15);
+  background: #e62222;
+ }
+ 
+ .button-remove, .button-remove span {
+  transition: 200ms;
+ }
+ 
+ .button-remove .text {
+  transform: translateX(16px);
+  color: white;
+  font-weight: bold;
+ }
+ 
+ .button-remove .icon {
+  position: absolute;
+  border-left: 1px solid #c41b1b;
+  transform: translateX(70px);
+  height: 40px;
+  width: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+ }
+ 
+ .button-remove svg {
+  width: 15px;
+  fill: #eee;
+ }
+ 
+ .button-remove:hover {
+  background: #ff3636;
+ }
+ 
+ .button-remove:hover .text {
+  color: transparent;
+ }
+ 
+ .button-remove:hover .icon {
+  width: 150px;
+  border-left: none;
+  transform: translateX(-20px);
+ }
+ 
+ .button-remove:focus {
+  outline: none;
+ }
+ 
+ .button-remove:active .icon svg {
+  transform: scale(0.8);
+ }
+ 
+  .btn-wrapper {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .add-book-btn, .submit-req-btn {
+    background-color: #b4b4b4;
+    color: #f5f5f5;
     border: none;
-    padding: 10px;
-    border-radius: 5px;
     cursor: pointer;
-  }
-  .button-add{
-    background-color: rgb(81, 128, 230);
-  }
-  .button-add, .button-submit{
+    border-radius: 8px;
     width: 100%;
-    margin-bottom: 20px;
+    height: 45px;
+    transition: 0.3s;
+    margin: 5px;
   }
   
-  .button-remove {
-    background-color: rgb(248, 64, 64);
-    height: 37px;
-  }
+  
+.add-book-btn:hover {
+  background-color: #3b4ef6;
+  box-shadow: 0 0 0 5px #3b4ef65f;
+  color: #fff;
+}
 
-  .button-remove:hover{
-    background-color: rgb(221, 61, 61);
-  }
-
-  .button-add:hover{
-    background-color: rgb(68, 110, 199);
-  }
-  
-  .button-submit:hover {
-    background-color: #dda221;
-  }
-  
+.submit-req-btn:hover {
+  background-color: #32cf47;
+  box-shadow: 0 0 0 5px #4bf63b5f;
+  color: #fff;
+}

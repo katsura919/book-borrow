@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import './BookBorrowForm.css'; // Import CSS
+import Select from 'react-select'; // Import React-Select
+import './BookBorrowForm.css'; // Your CSS
 
 function BookBorrowForm() {
   const [borrowerType, setBorrowerType] = useState('student');
@@ -9,14 +10,29 @@ function BookBorrowForm() {
   const [lastName, setLastName] = useState('');
   const [email, setEmail] = useState('');
   const [contactNumber, setContactNumber] = useState('');
-  const [books, setBooks] = useState([{ title: '', isbn: '' }]);
+  const [selectedBooks, setSelectedBooks] = useState([]);
+  const [availableBooks, setAvailableBooks] = useState([]);
+ 
+
+  // Fetch available books on component mount
+  useEffect(() => {
+    const fetchBooks = async () => {
+      try {
+        const response = await axios.get('http://localhost:4000/available-books');
+        setAvailableBooks(response.data);
+      } catch (error) {
+        console.error('Error fetching books:', error);
+      }
+    };
+    fetchBooks();
+  }, []);
 
   const getBorrowLimit = (type) => {
     switch (type) {
       case 'student':
         return { maxBooks: 3, dueDays: 7 };
       case 'faculty':
-        return { maxBooks: 10, dueDays: 120 }; // 1 semester (~120 days)
+        return { maxBooks: 10, dueDays: 120 }; // 1 semester
       case 'employee':
         return { maxBooks: 10, dueDays: 7 };
       default:
@@ -26,31 +42,27 @@ function BookBorrowForm() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     const { maxBooks } = getBorrowLimit(borrowerType);
 
-    if (books.length > maxBooks) {
+    if (selectedBooks.length > maxBooks) {
       alert(`Exceeded the book limit! ${borrowerType}s can only borrow ${maxBooks} books.`);
       return;
     }
 
-    if (
-      !studentId || !firstName || !lastName || 
-      !email || !contactNumber || books.some(book => !book.title || !book.isbn)
-    ) {
+    if (!studentId || !firstName || !lastName || !email || !contactNumber) {
       alert('Please fill in all fields.');
       return;
     }
 
     try {
-      const response = await axios.post('http://localhost:4000/borrow', {
+      const response = await axios.post('http://localhost:4000/borrow-book', {
         studentId,
         firstName,
         lastName,
         email,
         contactNumber,
         borrowerType,
-        books,
+        books: selectedBooks,
       });
 
       if (response.status === 201) {
@@ -71,18 +83,19 @@ function BookBorrowForm() {
     setLastName('');
     setEmail('');
     setContactNumber('');
-    setBooks([{ title: '', isbn: '' }]);
+    setSelectedBooks([]);
   };
 
-  const handleBookChange = (index, field, value) => {
-    const newBooks = [...books];
-    newBooks[index][field] = value;
-    setBooks(newBooks);
+  // Options for the searchable dropdown
+  
+  const bookOptions = availableBooks.map((book) => ({
+    value: book.book_id,
+    label: `${book.title} (ISBN: ${book.isbn}) - ${book.available_copies} available`,
+  }));
+
+  const handleBookSelect = (selectedOptions) => {
+    setSelectedBooks(selectedOptions || []);
   };
-
-  const handleAddBook = () => setBooks([...books, { title: '', isbn: '' }]);
-
-  const handleRemoveBook = (index) => setBooks(books.filter((_, i) => i !== index));
 
   return (
     <form onSubmit={handleSubmit}>
@@ -148,32 +161,13 @@ function BookBorrowForm() {
       </label>
 
       <h3>Books to Borrow:</h3>
-      {books.map((book, index) => (
-        <div key={index} className="book-input">
-          <input
-            type="text"
-            value={book.title}
-            onChange={(e) => handleBookChange(index, 'title', e.target.value)}
-            placeholder={`Book ${index + 1} Title`}
-            required
-          />
-          <input
-            type="text"
-            value={book.isbn}
-            onChange={(e) => handleBookChange(index, 'isbn', e.target.value)}
-            placeholder={`Book ${index + 1} ISBN`}
-            required
-          />
-          {index > 0 && (
-            <button type="button" onClick={() => handleRemoveBook(index)}>
-              Remove
-            </button>
-          )}
-        </div>
-      ))}
-      <button type="button" onClick={handleAddBook}>
-        Add Another Book
-      </button>
+      <Select
+        isMulti
+        options={bookOptions}
+        onChange={handleBookSelect}
+        value={selectedBooks}
+        placeholder="Search and select books"
+      />
 
       <button type="submit">Borrow Books</button>
     </form>

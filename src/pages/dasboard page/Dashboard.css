@@ -7,10 +7,13 @@
     font-family: 'Arial', sans-serif;
   }
   
+.dashboard-title {
+  color: white;
+}
   /* Sidebar styling */
   .sidebar {
     width: 210px;
-    background-color: #343a40;
+    background-color: #1e88e5;
     color: white;
     display: flex;
     flex-direction: column;

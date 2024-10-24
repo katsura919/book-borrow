@@ -30,19 +30,19 @@ function Overview() {
       </header>
       <div className="card-container">
         <div className="card">
-          <h2 style={{color:'#3460e3'}}>Pending Requests</h2>
+          <h3 style={{color:'#262424'}}>Pending Requests</h3>
           <p>{counts.pending}</p>
         </div>
         <div className="card">
-          <h2 style={{color:'#2feb80'}}>Approved Requests</h2>
+          <h3 style={{color:'#262424'}}>Approved Requests</h3>
           <p>{counts.approved}</p>
         </div>
         <div className="card">
-          <h2 style={{color:'#e34040'}}>Rejected Requests</h2>
+          <h3 style={{color:'#262424'}}>Rejected Requests</h3>
           <p>{counts.rejected}</p>
         </div>
         <div className="card">
-          <h2 style={{color:'#ebc22f'}}>Overdue Requests</h2>
+          <h3 style={{color:'#262424'}}>Overdue Requests</h3>
           <p>{counts.overdue}</p>
         </div>
       </div>

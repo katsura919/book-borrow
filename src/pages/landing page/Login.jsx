@@ -59,6 +59,7 @@ function Login({ setToken }) {
 
             <input 
             placeholder="Password" 
+            type='password'
             value={password} 
             onChange={(e) => setPassword(e.target.value)} 
             className="input"
@@ -71,7 +72,7 @@ function Login({ setToken }) {
             type="submit">Login</button>
 
            
-            <p class="signup-link"
+            <p className="signup-link"
                type="submit"
                >Don't have an account? <a onClick={handleRegisterBtn}>Sign up</a></p>
         </div>
