@@ -169,7 +169,7 @@ function BookBorrowForm() {
         placeholder="Search and select books"
       />
 
-      <button type="submit">Borrow Books</button>
+      <button className='submit-req-btn' type="submit">Borrow Books</button>
     </form>
   );
 }

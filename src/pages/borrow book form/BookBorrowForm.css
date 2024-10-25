@@ -54,69 +54,8 @@ form {
     display: flex;
     flex: 1;
   }
-  
-  
-.button-remove {
-  margin: 0;
-  width: 120px;
-  height: 40px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  background: red;
-  border: none;
-  border-radius: 5px;
-  box-shadow: 1px 1px 3px rgba(0,0,0,0.15);
-  background: #e62222;
- }
+
  
- .button-remove, .button-remove span {
-  transition: 200ms;
- }
- 
- .button-remove .text {
-  transform: translateX(16px);
-  color: white;
-  font-weight: bold;
- }
- 
- .button-remove .icon {
-  position: absolute;
-  border-left: 1px solid #c41b1b;
-  transform: translateX(70px);
-  height: 40px;
-  width: 40px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
- }
- 
- .button-remove svg {
-  width: 15px;
-  fill: #eee;
- }
- 
- .button-remove:hover {
-  background: #ff3636;
- }
- 
- .button-remove:hover .text {
-  color: transparent;
- }
- 
- .button-remove:hover .icon {
-  width: 150px;
-  border-left: none;
-  transform: translateX(-20px);
- }
- 
- .button-remove:focus {
-  outline: none;
- }
- 
- .button-remove:active .icon svg {
-  transform: scale(0.8);
- }
  
   .btn-wrapper {
     display: flex;
@@ -132,7 +71,7 @@ form {
     width: 100%;
     height: 45px;
     transition: 0.3s;
-    margin: 5px;
+    
   }
   
   
